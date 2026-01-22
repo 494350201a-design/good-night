@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>温馨提示 - 永久留存</title>
+    <title>温馨提示 - 循环消失版</title>
     <style>
         body { 
             margin: 0; 
@@ -22,52 +22,64 @@
             font-size: 16px;
             font-weight: bold;
             z-index: 10;
-            /* 出现动画：从小变大 */
+            /* 出现动画 */
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            /* 允许重叠点击 */
             pointer-events: none; 
         }
         @keyframes popIn {
             0% { opacity: 0; transform: scale(0.3); }
             100% { opacity: 1; transform: scale(1); }
         }
+        /* 消失动画 */
+        .fade-out {
+            transition: opacity 1s, transform 1s;
+            opacity: 0;
+            transform: scale(0.8);
+        }
     </style>
 </head>
 <body>
     <script>
-        // 从图片中提取的内容
+        // 保持你要求的文字内容
         const tips = ["晚安张妍~"];
+        // 保持你图片中的颜色配置
         const bgColors = ['lightpink', 'skyblue', 'lightgreen', 'lavender', 'lightyellow', 'plum', 'coral', 'bisque', 'aquamarine', 'mistyrose', 'honeydew', 'peachpuff', 'paleturquoise', 'lavenderblush', 'oldlace', 'lemonchiffon', 'lightcyan'];
 
-        // 设置生成的总数量 (你图片中原本是500，网页端建议100-200效果最好)
-        const totalCount = 100; 
+        let zIndexCounter = 1;
 
-        function spawn() {
-            for (let i = 0; i < totalCount; i++) {
-                // 使用 setTimeout 让它们一个接一个蹦出来，而不是瞬间全屏，这样更有动感
-                setTimeout(() => {
-                    const div = document.createElement('div');
-                    div.className = 'popup';
-                    
-                    div.textContent = tips[Math.floor(Math.random() * tips.length)];
-                    div.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
-                    
-                    // 随机位置
-                    const x = Math.random() * (window.innerWidth - 280);
-                    const y = Math.random() * (window.innerHeight - 80);
-                    div.style.left = x + 'px';
-                    div.style.top = y + 'px';
-                    
-                    // 随机层级，让它们前后错落有致
-                    div.style.zIndex = i;
+        function createOnePopup() {
+            const div = document.createElement('div');
+            div.className = 'popup';
+            
+            div.textContent = tips[Math.floor(Math.random() * tips.length)];
+            div.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+            
+            // 随机位置
+            const x = Math.random() * (window.innerWidth - 280);
+            const y = Math.random() * (window.innerHeight - 80);
+            div.style.left = x + 'px';
+            div.style.top = y + 'px';
+            div.style.zIndex = zIndexCounter++;
 
-                    document.body.appendChild(div);
-                }, i * 50); // 每隔50毫秒蹦出一个
-            }
+            document.body.appendChild(div);
+
+            // --- 自动消失逻辑 ---
+            // 8 秒后开始淡出效果
+            setTimeout(() => {
+                div.classList.add('fade-out');
+                // 淡出动画结束后彻底移除元素
+                setTimeout(() => div.remove(), 1000);
+            }, 8000); 
         }
 
-        // 页面加载完直接运行
-        window.onload = spawn;
+        // --- 循环生成逻辑 ---
+        // 每 200 毫秒（0.2秒）生成一个新的，保证屏幕上数量较多
+        setInterval(createOnePopup, 200);
+
+        // 初始运行：页面打开立刻生成 10 个，让屏幕不空
+        for(let i=0; i<10; i++) {
+            setTimeout(createOnePopup, i * 100);
+        }
     </script>
 </body>
 </html>
