@@ -8,32 +8,20 @@
         body {
             margin: 0;
             overflow: hidden;
-            background: #000; /* 纯黑背景 */
-            color: #fff;
-            font-family: "Arial", sans-serif;
+            background-color: #000; /* 纯黑背景 */
         }
-        .heart, .text {
+        .item {
             position: absolute;
-            bottom: -50px; /* 关键：让它们从屏幕底部下方一点点出生 */
+            bottom: -50px; /* 强制从屏幕底部下方出生 */
             user-select: none;
-            opacity: 0;
-            animation: float 4s ease-in forwards;
+            pointer-events: none;
+            animation: float Up 5s linear forwards;
         }
-        @keyframes float {
-            0% {
-                opacity: 0;
-                transform: translateY(0) rotate(0deg);
-            }
-            20% {
-                opacity: 1;
-            }
-            80% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-110vh) rotate(360deg); /* 向上飘出屏幕 */
-            }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
@@ -42,30 +30,30 @@
         const texts = ["晚安张妍", "天天开心", "好梦 ❤️"];
         const hearts = ["❤️", "💖", "💗", "💓", "💕"];
 
-        function createItem(type) {
-            const item = document.createElement("div");
-            if (type === 'heart') {
-                item.className = "heart";
-                item.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                item.style.color = "#ff6b8b";
+        function create() {
+            const isHeart = Math.random() > 0.3;
+            const div = document.createElement("div");
+            div.className = "item";
+            
+            // 设置内容和颜色
+            if (isHeart) {
+                div.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                div.style.fontSize = (20 + Math.random() * 20) + "px";
             } else {
-                item.className = "text";
-                item.textContent = texts[Math.floor(Math.random() * texts.length)];
-                item.style.color = "#fff740";
+                div.textContent = texts[Math.floor(Math.random() * texts.length)];
+                div.style.color = "#fff740"; // 金黄色文字
+                div.style.fontSize = (16 + Math.random() * 10) + "px";
             }
+
+            div.style.left = Math.random() * 100 + "vw";
+            div.style.animationDuration = (4 + Math.random() * 4) + "s";
             
-            item.style.left = Math.random() * 100 + "vw";
-            item.style.fontSize = (15 + Math.random() * 20) + "px";
-            // 随机动画时长，让飘动错落有致
-            item.style.animationDuration = (3 + Math.random() * 3) + "s";
-            
-            document.body.appendChild(item);
-            setTimeout(() => item.remove(), 6000);
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 8000);
         }
 
-        // 持续生成
-        setInterval(() => createItem('heart'), 300);
-        setInterval(() => createItem('text'), 800);
+        // 每 300 毫秒生成一个
+        setInterval(create, 300);
     </script>
 </body>
 </html>
