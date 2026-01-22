@@ -3,85 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>温馨提示 - 循环版</title>
+    <title>温馨提示 - 永久留存</title>
     <style>
         body { 
             margin: 0; 
             overflow: hidden; 
-            background-color: #000; /* 黑色背景 */
+            background-color: #000; 
             height: 100vh; 
             font-family: "Microsoft YaHei", sans-serif; 
         }
         .popup {
             position: absolute;
-            width: 280px;
+            width: 260px;
             padding: 15px;
             text-align: center;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             font-size: 16px;
             font-weight: bold;
-            z-index: 1000;
-            /* 出现动画 */
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 10;
+            /* 出现动画：从小变大 */
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            /* 允许重叠点击 */
+            pointer-events: none; 
         }
         @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.5); }
+            0% { opacity: 0; transform: scale(0.3); }
             100% { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
 <body>
     <script>
-        // 1. 从你提供的图片中提取的文字
-        const tips = [
-            "晚安~", "晚安", "晚安", "晚安", 
-            "晚安", "梦想成真", "顺顺利利", "早点休息", 
-            "愿所有烦恼都消失", "别熬夜", "注意保暖", "远离垃圾人和垃圾事", 
-            "要微笑", "要开心", "要快乐", "要健康", "要平安", 
-            "要顺利", "要幸福", "要好运"
-        ];
-        
-        // 2. 从图片中提取的背景颜色
-        const bgColors = [
-            'lightpink', 'skyblue', 'lightgreen', 'lavender', 'lightyellow', 
-            'plum', 'coral', 'bisque', 'aquamarine', 'mistyrose', 
-            'honeydew', 'peachpuff', 'paleturquoise', 'lavenderblush', 
-            'oldlace', 'lemonchiffon', 'lightcyan'
-        ];
+        // 从图片中提取的内容
+        const tips = ["晚安~"];
+        const bgColors = ['lightpink', 'skyblue', 'lightgreen', 'lavender', 'lightyellow', 'plum', 'coral', 'bisque', 'aquamarine', 'mistyrose', 'honeydew', 'peachpuff', 'paleturquoise', 'lavenderblush', 'oldlace', 'lemonchiffon', 'lightcyan'];
 
-        function createPopup() {
-            const div = document.createElement('div');
-            div.className = 'popup';
-            
-            // 随机选择文字和颜色
-            div.textContent = tips[Math.floor(Math.random() * tips.length)];
-            div.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
-            
-            // 随机计算出现位置，确保不超出屏幕
-            const x = Math.random() * (window.innerWidth - 300);
-            const y = Math.random() * (window.innerHeight - 80);
-            div.style.left = x + 'px';
-            div.style.top = y + 'px';
+        // 设置生成的总数量 (你图片中原本是500，网页端建议100-200效果最好)
+        const totalCount = 100; 
 
-            document.body.appendChild(div);
+        function spawn() {
+            for (let i = 0; i < totalCount; i++) {
+                // 使用 setTimeout 让它们一个接一个蹦出来，而不是瞬间全屏，这样更有动感
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'popup';
+                    
+                    div.textContent = tips[Math.floor(Math.random() * tips.length)];
+                    div.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+                    
+                    // 随机位置
+                    const x = Math.random() * (window.innerWidth - 280);
+                    const y = Math.random() * (window.innerHeight - 80);
+                    div.style.left = x + 'px';
+                    div.style.top = y + 'px';
+                    
+                    // 随机层级，让它们前后错落有致
+                    div.style.zIndex = i;
 
-            // 6秒后自动移除，防止页面堆积太多导致浏览器卡死
-            setTimeout(() => {
-                div.style.transition = "opacity 0.5s";
-                div.style.opacity = "0";
-                setTimeout(() => div.remove(), 500);
-            }, 6000);
+                    document.body.appendChild(div);
+                }, i * 50); // 每隔50毫秒蹦出一个
+            }
         }
 
-        // 3. 无限循环逻辑
-        // 每 400 毫秒生成一个新的弹窗，模拟图片中的循环效果
-        setInterval(createPopup, 400);
-
-        // 初始先生成 3 个
-        for(let i=0; i<3; i++) {
-            setTimeout(createPopup, i * 200);
-        }
+        // 页面加载完直接运行
+        window.onload = spawn;
     </script>
 </body>
 </html>
