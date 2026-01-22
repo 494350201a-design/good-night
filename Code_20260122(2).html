@@ -3,95 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>温馨提示弹窗</title>
+    <title>温馨提示</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #000;
-            font-family: "微软雅黑", sans-serif;
-        }
+        body { margin: 0; overflow: hidden; background-color: #000; height: 100vh; font-family: "Microsoft YaHei", sans-serif; }
         .popup {
-            position: fixed;
-            padding: 15px 25px;
-            border-radius: 8px;
-            color: #333;
-            font-size: 16px;
+            position: absolute;
+            width: 300px;
+            padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 9999;
-            animation: fadeIn 0.5s ease-out forwards;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
         }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
     <script>
-        // 温馨提示文案列表
-        const tips = [
-            "晚安~", "晚安", "每天都要元气满满", "保持好心情", "好好爱自己",
-            "梦想成真", "顺顺利利", "早点休息", "愿所有烦恼都消失", "别熬夜", "注意保暖",
-            "远离垃圾人和垃圾事", "要微笑", "要开心", "要快乐", "要健康", "要平安", "要顺利",
-            "晚安", "晚安"
-        ];
+        // 提取自你图片中的提示语
+        const tips = ["多喝水呀~", "保持微笑", "每天都要元气满满", "保持好心情", "好好爱自己", "梦想成真", "顺顺利利", "早点休息", "愿所有烦恼都消失", "别熬夜", "注意保暖", "远离垃圾人和垃圾事", "要微笑", "要开心", "要快乐", "要健康", "要平安", "要顺利", "要幸福", "要好运"];
+        
+        // 提取自你图片中的背景颜色
+        const bgColors = ['lightpink', 'skyblue', 'lightgreen', 'lavender', 'lightyellow', 'plum', 'coral', 'bisque', 'aquamarine', 'mistyrose', 'honeydew', 'peachpuff', 'paleturquoise', 'lavenderblush', 'oldlace', 'lemonchiffon', 'lightcyan'];
 
-        // 背景颜色列表
-        const bgColors = [
-            "lightpink", "skyblue", "lightgreen", "lavender", "lightyellow", "plum",
-            "coral", "bisque", "aquamarine", "mistyrose", "honeydew", "peachpuff",
-            "paleturquoise", "lavenderblush", "oldlace", "lemonchiffon", "lightcyan"
-        ];
+        let count = 0;
+        const maxCount = 50; // 你原代码是500，网页端建议先设为50，否则浏览器可能卡死
 
-        // 弹窗数量和间隔
-        const windowCount = 50;
-        const interval = 50;
-        const duration = 8000;
-
-        // 创建弹窗
         function createPopup() {
-            const popup = document.createElement("div");
-            popup.className = "popup";
+            if (count >= maxCount) return;
 
-            // 随机选择文案和背景色
-            const tip = tips[Math.floor(Math.random() * tips.length)];
-            const bg = bgColors[Math.floor(Math.random() * bgColors.length)];
-
-            popup.textContent = tip;
-            popup.style.backgroundColor = bg;
-
+            const div = document.createElement('div');
+            div.className = 'popup';
+            div.textContent = tips[Math.floor(Math.random() * tips.length)];
+            div.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+            
             // 随机位置
-            const x = Math.random() * (window.innerWidth - 200);
+            const x = Math.random() * (window.innerWidth - 320);
             const y = Math.random() * (window.innerHeight - 100);
-            popup.style.left = `${x}px`;
-            popup.style.top = `${y}px`;
+            div.style.left = x + 'px';
+            div.style.top = y + 'px';
 
-            document.body.appendChild(popup);
+            document.body.appendChild(div);
+            count++;
 
-            // 自动移除
-            setTimeout(() => {
-                popup.remove();
-            }, duration);
+            // 8秒后消失 (对应你图片里的 8000ms)
+            setTimeout(() => div.remove(), 8000);
+
+            // 每50毫秒弹出一个 (对应你图片里的 root.after(50))
+            setTimeout(createPopup, 100); 
         }
 
-        // 批量创建弹窗
-        let count = 0;
-        const popupTimer = setInterval(() => {
-            if (count >= windowCount) {
-                clearInterval(popupTimer);
-                return;
-            }
-            createPopup();
-            count++;
-        }, interval);
+        // 启动
+        createPopup();
     </script>
 </body>
 </html>
