@@ -3,61 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>温馨提示</title>
+    <title>温馨提示 - 循环版</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #000; height: 100vh; font-family: "Microsoft YaHei", sans-serif; }
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #000; /* 黑色背景 */
+            height: 100vh; 
+            font-family: "Microsoft YaHei", sans-serif; 
+        }
         .popup {
             position: absolute;
-            width: 300px;
-            padding: 20px;
+            width: 280px;
+            padding: 15px;
             text-align: center;
-            border-radius: 10px;
+            border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             font-size: 16px;
             font-weight: bold;
             z-index: 1000;
-            animation: fadeIn 0.3s ease-out;
+            /* 出现动画 */
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body>
     <script>
-        // 提取自你图片中的提示语
-        const tips = ["多喝水呀~", "保持微笑", "每天都要元气满满", "保持好心情", "好好爱自己", "梦想成真", "顺顺利利", "早点休息", "愿所有烦恼都消失", "别熬夜", "注意保暖", "远离垃圾人和垃圾事", "要微笑", "要开心", "要快乐", "要健康", "要平安", "要顺利", "要幸福", "要好运"];
+        // 1. 从你提供的图片中提取的文字
+        const tips = [
+            "晚安~", "保持微笑", "每天都要元气满满", "保持好心情", 
+            "好好爱自己", "梦想成真", "顺顺利利", "早点休息", 
+            "愿所有烦恼都消失", "别熬夜", "注意保暖", "远离垃圾人和垃圾事", 
+            "要微笑", "要开心", "要快乐", "要健康", "要平安", 
+            "要顺利", "要幸福", "要好运"
+        ];
         
-        // 提取自你图片中的背景颜色
-        const bgColors = ['lightpink', 'skyblue', 'lightgreen', 'lavender', 'lightyellow', 'plum', 'coral', 'bisque', 'aquamarine', 'mistyrose', 'honeydew', 'peachpuff', 'paleturquoise', 'lavenderblush', 'oldlace', 'lemonchiffon', 'lightcyan'];
-
-        let count = 0;
-        const maxCount = 50; // 你原代码是500，网页端建议先设为50，否则浏览器可能卡死
+        // 2. 从图片中提取的背景颜色
+        const bgColors = [
+            'lightpink', 'skyblue', 'lightgreen', 'lavender', 'lightyellow', 
+            'plum', 'coral', 'bisque', 'aquamarine', 'mistyrose', 
+            'honeydew', 'peachpuff', 'paleturquoise', 'lavenderblush', 
+            'oldlace', 'lemonchiffon', 'lightcyan'
+        ];
 
         function createPopup() {
-            if (count >= maxCount) return;
-
             const div = document.createElement('div');
             div.className = 'popup';
+            
+            // 随机选择文字和颜色
             div.textContent = tips[Math.floor(Math.random() * tips.length)];
             div.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
             
-            // 随机位置
-            const x = Math.random() * (window.innerWidth - 320);
-            const y = Math.random() * (window.innerHeight - 100);
+            // 随机计算出现位置，确保不超出屏幕
+            const x = Math.random() * (window.innerWidth - 300);
+            const y = Math.random() * (window.innerHeight - 80);
             div.style.left = x + 'px';
             div.style.top = y + 'px';
 
             document.body.appendChild(div);
-            count++;
 
-            // 8秒后消失 (对应你图片里的 8000ms)
-            setTimeout(() => div.remove(), 8000);
-
-            // 每50毫秒弹出一个 (对应你图片里的 root.after(50))
-            setTimeout(createPopup, 100); 
+            // 6秒后自动移除，防止页面堆积太多导致浏览器卡死
+            setTimeout(() => {
+                div.style.transition = "opacity 0.5s";
+                div.style.opacity = "0";
+                setTimeout(() => div.remove(), 500);
+            }, 6000);
         }
 
-        // 启动
-        createPopup();
+        // 3. 无限循环逻辑
+        // 每 400 毫秒生成一个新的弹窗，模拟图片中的循环效果
+        setInterval(createPopup, 400);
+
+        // 初始先生成 3 个
+        for(let i=0; i<3; i++) {
+            setTimeout(createPopup, i * 200);
+        }
     </script>
 </body>
 </html>
