@@ -9,51 +9,66 @@
             margin: 0;
             overflow: hidden;
             background-color: #000; /* 纯黑背景 */
+            height: 100vh;
+        }
+        /* 一个测试用的白色边框，如果你看到这个框，说明代码更新成功了 */
+        #test-border {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid red;
+            pointer-events: none;
+            z-index: 9999;
         }
         .item {
             position: absolute;
-            bottom: -50px; /* 强制从屏幕底部下方出生 */
             user-select: none;
             pointer-events: none;
-            animation: float Up 5s linear forwards;
+            /* 简单的淡入淡出动画 */
+            animation: fadeInOut 4s linear forwards;
         }
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.5); }
+            20% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.2); }
         }
     </style>
 </head>
 <body>
+    <div id="test-border"></div>
+
     <script>
-        const texts = ["晚安张妍", "天天开心", "好梦 ❤️"];
+        const texts = ["晚安张妍", "天天开心", "好梦 ❤️", "✨✨✨"];
         const hearts = ["❤️", "💖", "💗", "💓", "💕"];
 
         function create() {
-            const isHeart = Math.random() > 0.3;
+            const isHeart = Math.random() > 0.4;
             const div = document.createElement("div");
             div.className = "item";
             
-            // 设置内容和颜色
             if (isHeart) {
                 div.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                div.style.fontSize = (20 + Math.random() * 20) + "px";
+                div.style.fontSize = (25 + Math.random() * 25) + "px";
             } else {
                 div.textContent = texts[Math.floor(Math.random() * texts.length)];
-                div.style.color = "#fff740"; // 金黄色文字
-                div.style.fontSize = (16 + Math.random() * 10) + "px";
+                div.style.color = "#fff740"; // 亮黄色
+                div.style.fontSize = (18 + Math.random() * 12) + "px";
+                div.style.fontWeight = "bold";
             }
 
-            div.style.left = Math.random() * 100 + "vw";
-            div.style.animationDuration = (4 + Math.random() * 4) + "s";
+            // 【关键修改】让它们随机出现在屏幕中间区域，绝对不会跑到屏幕外
+            div.style.left = (Math.random() * 80 + 10) + "vw"; // 屏幕宽度的 10%~90%
+            div.style.top = (Math.random() * 80 + 10) + "vh";  // 屏幕高度的 10%~90%
             
             document.body.appendChild(div);
-            setTimeout(() => div.remove(), 8000);
+            // 4秒后移除
+            setTimeout(() => div.remove(), 4000);
         }
 
-        // 每 300 毫秒生成一个
-        setInterval(create, 300);
+        // 先立即生成几个
+        for(let i=0; i<5; i++) create();
+        // 然后持续生成
+        setInterval(create, 500);
     </script>
 </body>
 </html>
